@@ -1,0 +1,810 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>💇 Coloque a Peruca no Ubiratan!</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(#8ed8ff, #e9f8ff);
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        #jogo {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* PAINEL */
+
+        #painel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+
+            background: white;
+
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+
+            z-index: 20;
+        }
+
+        .info {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* BONEQUINHO */
+
+        #boneco {
+            position: absolute;
+
+            bottom: 40px;
+            left: 50%;
+
+            transform: translateX(-50%);
+
+            width: 180px;
+            height: 270px;
+
+            z-index: 5;
+        }
+
+        /* Cabeça */
+
+        #cabeca {
+            position: absolute;
+
+            top: 0;
+            left: 25px;
+
+            width: 130px;
+            height: 140px;
+
+            background: #f4bd91;
+
+            border-radius: 50%;
+
+            border: 3px solid #333;
+        }
+
+        /* Olhos */
+
+        .olho {
+            position: absolute;
+
+            top: 55px;
+
+            width: 12px;
+            height: 16px;
+
+            background: #222;
+
+            border-radius: 50%;
+        }
+
+        .olho.esquerdo {
+            left: 38px;
+        }
+
+        .olho.direito {
+            right: 38px;
+        }
+
+        /* Nariz */
+
+        #nariz {
+            position: absolute;
+
+            top: 72px;
+            left: 58px;
+
+            width: 15px;
+            height: 15px;
+
+            border-right: 3px solid #a66b4d;
+            border-bottom: 3px solid #a66b4d;
+
+            transform: rotate(45deg);
+        }
+
+        /* Boca */
+
+        #boca {
+            position: absolute;
+
+            bottom: 25px;
+            left: 48px;
+
+            width: 35px;
+            height: 15px;
+
+            border-bottom: 4px solid #8e3e3e;
+
+            border-radius: 50%;
+        }
+
+        /* Corpo */
+
+        #corpo {
+            position: absolute;
+
+            bottom: 0;
+            left: 15px;
+
+            width: 150px;
+            height: 140px;
+
+            background: #4d79ff;
+
+            border-radius: 60px 60px 20px 20px;
+
+            border: 3px solid #333;
+        }
+
+        /* PERUCA */
+
+        .peruca {
+            position: absolute;
+
+            width: 100px;
+            height: 75px;
+
+            background: #5a301c;
+
+            border-radius: 55% 55% 45% 45%;
+
+            cursor: pointer;
+
+            z-index: 10;
+
+            box-shadow:
+                inset -8px -8px 10px rgba(0,0,0,0.2),
+                inset 8px 8px 10px rgba(255,255,255,0.2);
+
+            animation: cair linear forwards;
+
+            touch-action: manipulation;
+        }
+
+        /* Pontas do cabelo */
+
+        .peruca::before {
+            content: "";
+
+            position: absolute;
+
+            width: 25px;
+            height: 45px;
+
+            background: inherit;
+
+            left: -10px;
+            bottom: -10px;
+
+            border-radius: 50%;
+        }
+
+        .peruca::after {
+            content: "";
+
+            position: absolute;
+
+            width: 25px;
+            height: 45px;
+
+            background: inherit;
+
+            right: -10px;
+            bottom: -10px;
+
+            border-radius: 50%;
+        }
+
+        /* Animação da queda */
+
+        @keyframes cair {
+
+            from {
+                transform: translateY(-120px) rotate(-10deg);
+            }
+
+            to {
+                transform: translateY(110vh) rotate(10deg);
+            }
+
+        }
+
+        /* Animação quando acertar */
+
+        .acertou {
+            animation: colocarPeruca 0.7s forwards !important;
+        }
+
+        @keyframes colocarPeruca {
+
+            0% {
+                transform: scale(1) rotate(0);
+            }
+
+            50% {
+                transform: scale(1.3) rotate(10deg);
+            }
+
+            100% {
+                transform:
+                    translate(
+                        calc(50vw - 50%),
+                        0
+                    )
+                    scale(1)
+                    rotate(0);
+            }
+
+        }
+
+        /* Texto de acerto */
+
+        .pontosAnimacao {
+
+            position: absolute;
+
+            font-size: 30px;
+
+            font-weight: bold;
+
+            color: #ff4081;
+
+            pointer-events: none;
+
+            animation: subirTexto 0.8s forwards;
+
+            z-index: 50;
+        }
+
+        @keyframes subirTexto {
+
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(-70px);
+            }
+
+        }
+
+        /* TELA INICIAL */
+
+        #inicio,
+        #fim {
+
+            position: absolute;
+
+            top: 50%;
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+
+            width: 90%;
+            max-width: 450px;
+
+            padding: 35px;
+
+            background: white;
+
+            border-radius: 25px;
+
+            text-align: center;
+
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+
+            z-index: 100;
+        }
+
+        #fim {
+            display: none;
+        }
+
+        h1 {
+            color: #ff4081;
+            font-size: 36px;
+        }
+
+        p {
+            font-size: 19px;
+            line-height: 1.5;
+        }
+
+        button {
+
+            padding: 15px 35px;
+
+            border: none;
+
+            border-radius: 30px;
+
+            background: #ff4081;
+
+            color: white;
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        @media(max-width:600px) {
+
+            .info {
+                font-size: 16px;
+            }
+
+            #boneco {
+                transform: translateX(-50%) scale(0.85);
+                transform-origin: bottom center;
+            }
+
+            .peruca {
+                width: 80px;
+                height: 60px;
+            }
+
+            h1 {
+                font-size: 29px;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div id="jogo">
+
+    <!-- PAINEL -->
+
+    <div id="painel">
+
+        <div class="info">
+            💇 Pontos: <span id="pontos">0</span>
+        </div>
+
+        <div class="info">
+            ⏱️ Tempo: <span id="tempo">30</span>
+        </div>
+
+    </div>
+
+
+    <!-- BONECO -->
+
+    <div id="boneco">
+
+        <div id="cabeca">
+
+            <div class="olho esquerdo"></div>
+            <div class="olho direito"></div>
+
+            <div id="nariz"></div>
+
+            <div id="boca"></div>
+
+        </div>
+
+        <div id="corpo"></div>
+
+    </div>
+
+
+    <!-- TELA INICIAL -->
+
+    <div id="inicio">
+
+        <h1>💇 Coloque a Peruca no Ubiratan!</h1>
+
+        <p>
+            O Bira está careca! 😱
+        </p>
+
+        <p>
+            Clique ou toque nas perucas que estão caindo
+            para colocá-las na cabeça dele.
+        </p>
+
+        <button onclick="iniciarJogo()">
+            COMEÇAR
+        </button>
+
+    </div>
+
+
+    <!-- FIM -->
+
+    <div id="fim">
+
+        <h1>🎉 Fim de jogo!</h1>
+
+        <p>
+            Você colocou
+            <strong>
+                <span id="resultado">0</span>
+            </strong>
+            perucas!
+        </p>
+
+        <p id="mensagem"></p>
+
+        <button onclick="iniciarJogo()">
+            JOGAR NOVAMENTE
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    let pontos = 0;
+    let tempo = 30;
+
+    let jogoAtivo = false;
+
+    let intervaloPerucas;
+    let intervaloTempo;
+
+
+    const jogo = document.getElementById("jogo");
+
+    const pontosTexto =
+        document.getElementById("pontos");
+
+    const tempoTexto =
+        document.getElementById("tempo");
+
+    const inicio =
+        document.getElementById("inicio");
+
+    const fim =
+        document.getElementById("fim");
+
+    const resultado =
+        document.getElementById("resultado");
+
+    const mensagem =
+        document.getElementById("mensagem");
+
+
+    function iniciarJogo() {
+
+        // Remove perucas antigas
+
+        document.querySelectorAll(".peruca").forEach(peruca => {
+            peruca.remove();
+        });
+
+
+        // Reinicia
+
+        pontos = 0;
+        tempo = 30;
+
+        jogoAtivo = true;
+
+
+        pontosTexto.textContent = pontos;
+        tempoTexto.textContent = tempo;
+
+
+        inicio.style.display = "none";
+        fim.style.display = "none";
+
+
+        // Cria perucas
+
+        intervaloPerucas =
+            setInterval(criarPeruca, 1000);
+
+
+        // Contador
+
+        intervaloTempo =
+            setInterval(() => {
+
+                tempo--;
+
+                tempoTexto.textContent = tempo;
+
+
+                if (tempo <= 0) {
+
+                    finalizarJogo();
+
+                }
+
+            }, 1000);
+
+    }
+
+
+    function criarPeruca() {
+
+        if (!jogoAtivo) return;
+
+
+        const peruca =
+            document.createElement("div");
+
+
+        peruca.classList.add("peruca");
+
+
+        // Cores diferentes
+
+        const cores = [
+           "#ff0000", // vermelho
+"#0000ff", // azul
+"#00ff00", // verde
+"#ffff00", // amarelo
+"#ffa500", // laranja
+"#800080", // roxo
+"#ff69b4", // rosa
+"#8b4513", // marrom
+"#000000", // preto
+"#ffffff", // branco
+"#808080", // cinza
+"#00ffff", // ciano
+"#008080", // verde-azulado
+"#4b0082", // índigo
+"#ee82ee", // violeta
+"#40e0d0", // turquesa
+"#dc143c", // carmesim
+"#ffd700", // dourado
+"#f08080", // coral claro
+"#98fb98", // verde claro
+        ];
+
+
+        const cor =
+            cores[
+                Math.floor(
+                    Math.random() * cores.length
+                )
+            ];
+
+
+        peruca.style.backgroundColor = cor;
+
+
+        // Posição aleatória
+
+        const tamanho = 100;
+
+        const x =
+            Math.random() *
+            (window.innerWidth - tamanho);
+
+
+        peruca.style.left = x + "px";
+
+
+        // Velocidade
+
+        const duracao =
+    3 + Math.random() * 2;
+
+peruca.style.animationDuration =
+    duracao + "s";
+
+
+        peruca.style.animationDuration =
+            duracao + "s";
+
+
+        // Clique / toque
+
+        peruca.addEventListener(
+            "pointerdown",
+            pegarPeruca
+        );
+
+
+        jogo.appendChild(peruca);
+
+
+        // Remove depois da queda
+
+        setTimeout(() => {
+
+            if (peruca.parentElement) {
+                peruca.remove();
+            }
+
+        }, duracao * 1000 + 500);
+
+    }
+
+
+    function pegarPeruca(event) {
+
+        if (!jogoAtivo) return;
+
+
+        event.preventDefault();
+
+
+        const peruca =
+            event.currentTarget;
+
+
+        // Pega a posição da peruca
+
+        const rect =
+            peruca.getBoundingClientRect();
+
+
+        // Remove a animação de queda
+
+        peruca.style.animation = "none";
+
+
+        // Faz a peruca ir para a cabeça
+
+        const cabeca =
+            document.getElementById("cabeca");
+
+
+        const cabecaRect =
+            cabeca.getBoundingClientRect();
+
+
+        const destinoX =
+            cabecaRect.left +
+            cabecaRect.width / 2 -
+            rect.width / 2;
+
+
+        const destinoY =
+            cabecaRect.top -
+            20;
+
+
+        const atualX = rect.left;
+        const atualY = rect.top;
+
+
+        peruca.style.transition =
+            "all 0.6s ease";
+
+
+        peruca.style.left =
+            destinoX + "px";
+
+
+        peruca.style.top =
+            destinoY + "px";
+
+
+        peruca.style.transform =
+            "scale(0.9)";
+
+
+        // Pontuação
+
+        pontos++;
+
+        pontosTexto.textContent = pontos;
+
+
+        // Texto +1
+
+        const texto =
+            document.createElement("div");
+
+        texto.classList.add("pontosAnimacao");
+
+        texto.textContent = "+1 🎉";
+
+
+        texto.style.left =
+            atualX + "px";
+
+        texto.style.top =
+            atualY + "px";
+
+
+        jogo.appendChild(texto);
+
+
+        setTimeout(() => {
+            texto.remove();
+        }, 800);
+
+
+        // Depois de encaixar
+
+        setTimeout(() => {
+
+            peruca.remove();
+
+        }, 650);
+
+    }
+
+
+    function finalizarJogo() {
+
+        jogoAtivo = false;
+
+
+        clearInterval(intervaloPerucas);
+        clearInterval(intervaloTempo);
+
+
+        document.querySelectorAll(".peruca").forEach(peruca => {
+            peruca.remove();
+        });
+
+
+        resultado.textContent = pontos;
+
+
+        if (pontos >= 20) {
+
+            mensagem.textContent =
+                "🏆 Você é um mestre das perucas!";
+
+        } else if (pontos >= 10) {
+
+            mensagem.textContent =
+                "👏 Muito bom! O bonequinho ficou estiloso!";
+
+        } else {
+
+            mensagem.textContent =
+                "😄 Tente novamente e coloque mais perucas!";
+
+        }
+
+
+        fim.style.display = "block";
+
+    }
+
+</script>
+
+</body>
+
+</html>
+```
